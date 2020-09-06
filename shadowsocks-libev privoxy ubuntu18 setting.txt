@@ -1,0 +1,70 @@
+ssh root@IP Address
+如果连接不上，那恭喜你，换 IP 吧，不要折腾了
+
+On Server PC:
+
+1.
+sudo apt update
+
+2.
+wget –no-check-certificate -O shadowsocks.sh https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
+
+3.
+chmod +x shadowsocks.sh
+
+4.
+./shadowsocks.sh 2>&1 | tee shadowsocks.log
+
+5.设置 SS 密码、端口号、选择加密方式
+
+6.配置好后，按任意键等待安装完成即可
+
+On Client 
+
+1.
+sudo apt update
+sudo apt install shadowsocks-libev
+sudo vi /etc/shadowsocks-libev/config.json
+{
+    "server":"your-server-ip-address",
+    "server_port":your-server-ip-port,
+    "local_address":"127.0.0.1",
+    "local_port":1080,
+    "password":"your-server-ip-password",
+    "timeout":60,
+    "method":"chacha20-ietf-poly1305"
+}
+sudo systemctl start shadowsocks-libev-local@config.service
+sudo systemctl enable shadowsocks-libev-local@config.service
+
+1.
+sudo apt install privoxy
+
+2.
+sudo vi /etc/privoxy/config
+
+把下面2句话在该文件中找出并取消注释，1080后面有个逗号，不要漏看了，一个是1337行，一个是783行
+forward-socks5   /               127.0.0.1:1080 .
+listen-address  localhost:8118
+
+3.开启privoxy服务
+sudo privoxy /etc/privoxy/config
+
+4.设置HTTP代理地址
+export http_proxy=http://localhost:8118
+
+5.测试效果
+curl ip.gs
+wget www.google.com
+
+
+
+
+
+
+
+
+
+
+
+
